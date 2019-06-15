@@ -3,8 +3,8 @@
 
 void cada_pixel(int ** pixels, double * ilbp){
 
-  for (int linha = 1; linha < 1024; linha++) {
-    for (int coluna = 1; coluna < 1024; coluna++) {
+  for (int linha = 1; linha < 1023; linha++) {
+    for (int coluna = 1; coluna < 1023; coluna++) {
       ilbp[media_vizinhos(pixels, linha, coluna)] += 1.0;
     }
   }

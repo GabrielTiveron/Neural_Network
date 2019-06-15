@@ -1,29 +1,45 @@
 #include "../inc/glcm.h"
 
-void glcm(int ** pixels, double glcm_vector[24]){
-  double **glcm_matrix = (double**)calloc(257, sizeof(double*));
+void glcm(int ** pixels, double *glcm_vector){
+  int m = 257, n = 257;
+  double **glcm_matrix;
   double homogeneidade = 0;
   double energia = 0;
   double contraste = 0;
 
-  for (int i = 0; i < 256; i++) {
-    *(glcm_matrix+i) = (double*)calloc(257, sizeof(double));
+  glcm_matrix = (double**)malloc(m* sizeof(double*));
+
+  for (int i = 0; i < 257; i++) {
+    glcm_matrix[i] = (double*)malloc(n*sizeof(double));
+  }
+
+  for (int i = 0; i < 257; i++) {
+    for (int j = 0; j < 257; j++) {
+      glcm_matrix[i][j] = 0;
+    }
   }
 
   for (int i = 0; i < 8; i++){
     build_glcm_matrix(pixels, glcm_matrix, i);
-    // printf("Depois build\n");
     calcular_homogeneidade(glcm_matrix, &homogeneidade, glcm_vector, i);
-    // printf("Depois homogeneidade\n");
     calcular_energia(glcm_matrix, &energia, glcm_vector, i);
-    // printf("Depois energia\n");
     calcular_contraste(glcm_matrix, &contraste, glcm_vector, i);
-    // printf("Depois contraste\n");
   }
 
-  free(glcm_matrix);
+  for (int i = 0; i < 257; i++){
+    free(glcm_matrix[i]);
+  }
+free(glcm_matrix);
 
 }
+
+// void free_matrix(double **matriz){
+//   int size = sizeof(*matriz) / sizeof(double);
+//
+//   for (int i = 0; i < size; i++) {
+//     free(matriz[i]);
+//   }
+// }
 
 void build_glcm_matrix(int ** file, double **glcm_matrix, int num){
   int current_value = 0, aux_value = 0;
@@ -34,13 +50,13 @@ void build_glcm_matrix(int ** file, double **glcm_matrix, int num){
 
 
       // LATERAL DIREITO
-      if( j < 1023 && num == 0){
+      if( j < 1022 && num == 0){
         aux_value = *(*(file+i)+j+1);
         glcm_matrix[current_value][aux_value]+=1;
       }
       // printf("Depois direta\n");
       // DIAGONAL DIREITA SUPERIOR
-      if( j < 1024 && i > 0 && num == 1){
+      if( j < 1022 && i > 0 && num == 1){
         aux_value = *(*(file+i-1)+j+1);
         glcm_matrix[current_value][aux_value]+=1;
       }
@@ -71,21 +87,21 @@ void build_glcm_matrix(int ** file, double **glcm_matrix, int num){
       // printf("Depois esquerda\n");
 
       // DIAGONAL ESQUERDA INFERIOR
-      if( j > 0 && i < 1024 && num == 5){
+      if( j > 0 && i < 1022 && num == 5){
         aux_value = *(*(file+i+1)+j)-1;
         *(*(glcm_matrix+current_value)+aux_value)+=1;
       }
       // printf("Depois esquerda inf\n");
 
       // INFERIOR
-      if( i < 1024 && num == 6){
+      if( i < 1022 && num == 6){
         aux_value = *(*(file+i+1)+j);
         glcm_matrix[current_value][aux_value]+=1;
       }
       // printf("Depois inf\n");
 
       // DIAGONAL DIREITA INFERIOR
-      if( i < 1024 && j < 1024 && num == 7){
+      if( i < 1022 && j < 1022 && num == 7){
         aux_value = *(*(file+i+1)+j+1);
         glcm_matrix[current_value][aux_value]+=1;
       }
@@ -98,8 +114,8 @@ void build_glcm_matrix(int ** file, double **glcm_matrix, int num){
 void calcular_homogeneidade(double **glcm_matrix, double *homogeneidade, double *glcm_vector, int num){
 
   *homogeneidade = 0;
-  for (int i = 0; i < 256 ; i++){
-    for (int j = 0;j < 256; j++){
+  for (int i = 0; i < 257; i++){
+    for (int j = 0;j < 257; j++){
       *homogeneidade += glcm_matrix[i][j]/(1.0+abs(i-j));
     }
   }
@@ -111,8 +127,8 @@ void calcular_homogeneidade(double **glcm_matrix, double *homogeneidade, double 
 
 void calcular_energia(double **glcm_matrix, double *energia, double *glcm_vector, int num){
 
-  for (int i = 0; i < 256; i++){
-    for (int j = 0;j < 256; j++){
+  for (int i = 0; i < 257; i++){
+    for (int j = 0;j < 257; j++){
       *energia += pow(glcm_matrix[i][j], 2);
     }
   }
@@ -125,8 +141,8 @@ void calcular_energia(double **glcm_matrix, double *energia, double *glcm_vector
 
 void calcular_contraste(double **glcm_matrix, double *contraste, double *glcm_vector, int num){
 
-  for (int i = 0; i < 256; i++){
-    for (int j = 0;j < 256; j++){
+  for (int i = 0; i < 257; i++){
+    for (int j = 0;j < 257; j++){
       *contraste += (i - j)*(i - j)*glcm_matrix[i][j];
     }
   }
