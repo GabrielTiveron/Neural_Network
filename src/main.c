@@ -38,7 +38,7 @@ int main(int argc, char const **argv) {
     gerar_vetores(pixels, casos_treino[index_treino], opcao, resultado[i]);
   }
 
-
+  //treinar_rede(resultados, nmr_neuronios);
 
 
 

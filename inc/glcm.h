@@ -7,7 +7,7 @@
 // #define NUM_LINES 255;
 // #define NUM_SOLUMN 255;
 
-void glcm(int **, double*);
+void glcm(int **, double*, double**);
 void free_matrix(double**);
 void build_glcm_matrix(int **, double **, int);
 void calcular_homogeneidade(double **, double *, double *, int);

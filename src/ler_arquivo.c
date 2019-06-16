@@ -68,16 +68,17 @@ void gerar_vetores(int ** pixels, int index_teste, int opcao, double *resultado)
 
   double * ilbp = (double*)calloc(512, sizeof(double));
   double * glcm_teste = (double*)malloc(24*sizeof(double));
-  if(ilbp == NULL || glcm_teste == NULL){
+  double ** glcm_matrix = calloc(256, sizeof(double*));
+  for(int i = 0; i < 256; i++){
+	  glcm_matrix[i] = calloc(256, sizeof(double));
+  } 
+  if(ilbp == NULL || glcm_teste == NULL || glcm_matrix == NULL){
     printf("Não foi possível alocar memoria\n");
     exit(-1);
   }
   ler_imagens(arquivo, pixels);
-  printf("To aqui\n");
   cada_pixel(pixels, ilbp);
-  printf("To aqui depois ilbp\n");
-  glcm(pixels, glcm_teste);
-  printf("To aqui depois glcm\n");
+  glcm(pixels, glcm_teste, glcm_matrix);
 
   concatenar(ilbp, glcm_teste, resultado);
 
@@ -86,6 +87,8 @@ void gerar_vetores(int ** pixels, int index_teste, int opcao, double *resultado)
   free(arquivo);
   free(ilbp);
   free(glcm_teste);
+  free(glcm_matrix[0]);
+  free(glcm_matrix);
 
 }
 
