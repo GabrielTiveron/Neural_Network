@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include"../inc/ler_arquivo.h"
+#include"../inc/rede_neural.h"
 #define ASFALTO 1
 #define GRAMA 0
 
@@ -26,9 +27,11 @@ int main(int argc, char const **argv) {
     printf("Não foi possível alocar memória\n");
     exit(-1);
   }
-
+  
+  printf("Sorteando casos de treino\n");
   sortear_casos(casos_treino);
-
+  printf("\t\t\tCriando dados de Treino\n");
+  printf("===================================================================\n");
   for (int i = 0; i < 50; i++) {
     if(i % 2 == 0){
       opcao = GRAMA;
@@ -38,9 +41,13 @@ int main(int argc, char const **argv) {
     gerar_vetores(pixels, casos_treino[index_treino], opcao, resultado[i]);
   }
 
-  //treinar_rede(resultados, nmr_neuronios);
+  printf("\t\t\tCalibrando Rede Neural\n");
+  printf("===================================================================\n");
 
+  treinar_rede(resultado, nmr_neuronios);
 
+  printf("\t\t\tRede Neural Calibrada\n");
+  printf("===================================================================\n");
 
   return 0;
 }

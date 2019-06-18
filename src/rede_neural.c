@@ -2,27 +2,44 @@
 
 void treinar_rede(double**entradas, int nmr_neuronio){
   Neuronio *camada_entrada, *camada_oculta, *camada_saida;
-
   camada_entrada = (Neuronio*)calloc(536, sizeof(Neuronio));
   camada_oculta  = (Neuronio*)calloc(nmr_neuronio, sizeof(Neuronio));
   camada_saida   = (Neuronio*)calloc(1, sizeof(Neuronio));
   //instanciar dados da camada de entrada
-  for(int i = 0; i < 50; i++){
-    inserir_dados(entradas[i], &camada_entrada);
-  }
+  sortear_wb(&camada_entrada, 536);
+  sortear_wb(&camada_entrada, nmr_neuronio);
+  sortear_wb(&camada_entrada, 1);
+  printf("\t\t\tPrimeira camada instanciada\n");
+  printf("===================================================================\n");
   //Epocas TODO
-  for(int i = 0; i < 1000; i++){
-    
+  printf("\t\t\tCalibrando Rede Neural\n");
+  printf("===================================================================\n");
+  int e = 0;
+  for(int epoca = 0; epoca < 1000; epoca++){
+    for(int i = 0; i < 50; i++){
+      inserir_dados(entradas[i], &camada_entrada);
+      inserir_dados(&camada_entrada->saida, &camada_oculta);  
+    }  
   }
 }
 
-void inserir_dados(double*entradas, Neuronio** camada_entrada){
-  for(int i = 0; i < 536; i++){
-    for(int j = 0; j < sizeof(entradas[i])/sizeof(double); j++)
-      (*camada_entrada+i)->w[i] = rand() % 10;
-    (*camada_entrada+i)->b = rand() % 10;
-    (*camada_entrada+i)->entrada = &entradas[i];
-    nucleo((*camada_entrada+i));
+void sortear_wb(Neuronio** neuronio, int nmr_entradas){
+  int size_neuronio = sizeof((*neuronio)) / sizeof(Neuronio);
+  for(int j = 0; j < size_neuronio; j++){
+    (*neuronio)->w = (int*)malloc(nmr_entradas*sizeof(int));
+    int size = sizeof((*neuronio)->w)/sizeof(int);
+    for(int i = 0; i < size; i++){
+      (*neuronio)->w[i] = rand()%10;
+    }
+    (*neuronio)->b = rand()%10;
+  }
+}
+
+void inserir_dados(double*entradas, Neuronio** camada){
+  int size = sizeof(*camada) / sizeof(Neuronio);
+  for(int i = 0; i < size; i++){
+    (*camada+i)->entrada = &entradas[i];
+    nucleo((*camada+i));
   }
 
 }

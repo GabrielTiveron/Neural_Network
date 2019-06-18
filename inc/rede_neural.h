@@ -1,6 +1,7 @@
 #ifndef REDE_NEURAL_H
 #define REDE_NEURAL_H
 
+#include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
 #define ENTRADA 0
@@ -12,8 +13,10 @@ typedef struct Neuronio{
   double saida;
   int* w;
   int b;
+  int camada;
 }Neuronio;
 
+void sortear_wb(Neuronio**,int);
 void treinar_rede(double**,int);
 void inserir_dados(double*, Neuronio**);
 void nucleo(Neuronio*);
