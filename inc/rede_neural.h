@@ -13,13 +13,13 @@ typedef struct Neuronio{
   double saida;
   int* w;
   int b;
-  int camada;
 }Neuronio;
 
-void sortear_wb(Neuronio**,int);
+void sortear_wb(Neuronio**,int,int);
 void treinar_rede(double**,int);
-void inserir_dados(double*, Neuronio**);
-void nucleo(Neuronio*);
+void inserir_camada_entrada(double*, Neuronio**, int);
+void inserir_dados(Neuronio*,Neuronio**,int,int);
+void nucleo(Neuronio*, int);
 double somatorio(Neuronio*, int);
 double f(double);
 

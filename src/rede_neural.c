@@ -6,47 +6,72 @@ void treinar_rede(double**entradas, int nmr_neuronio){
   camada_oculta  = (Neuronio*)calloc(nmr_neuronio, sizeof(Neuronio));
   camada_saida   = (Neuronio*)calloc(1, sizeof(Neuronio));
   //instanciar dados da camada de entrada
-  sortear_wb(&camada_entrada, 536);
-  sortear_wb(&camada_entrada, nmr_neuronio);
-  sortear_wb(&camada_entrada, 1);
+  sortear_wb(&camada_entrada, 536, 536);
+  sortear_wb(&camada_oculta, nmr_neuronio, 536);
+  sortear_wb(&camada_saida, 1, nmr_neuronio);
   printf("\t\t\tPrimeira camada instanciada\n");
   printf("===================================================================\n");
-  //Epocas TODO
+  printf("Camada_E=%d\tCamada_O=%d\tCamada_S=%d\n", (camada_entrada)->w[10], camada_oculta->w[11], camada_saida->w[15]);
   printf("\t\t\tCalibrando Rede Neural\n");
   printf("===================================================================\n");
-  int e = 0;
+  double e = 0;
   for(int epoca = 0; epoca < 1000; epoca++){
+    e = 0;
     for(int i = 0; i < 50; i++){
-      inserir_dados(entradas[i], &camada_entrada);
-      inserir_dados(&camada_entrada->saida, &camada_oculta);  
-    }  
-  }
-}
-
-void sortear_wb(Neuronio** neuronio, int nmr_entradas){
-  int size_neuronio = sizeof((*neuronio)) / sizeof(Neuronio);
-  for(int j = 0; j < size_neuronio; j++){
-    (*neuronio)->w = (int*)malloc(nmr_entradas*sizeof(int));
-    int size = sizeof((*neuronio)->w)/sizeof(int);
-    for(int i = 0; i < size; i++){
-      (*neuronio)->w[i] = rand()%10;
+      inserir_camada_entrada(entradas[i], &camada_entrada, 536);
+      printf("Primeira camada\n");
+      inserir_dados(camada_entrada, &camada_oculta, nmr_neuronio, 536);
+      printf("Camada oculta\n");
+      inserir_dados(camada_oculta, &camada_saida, 1, nmr_neuronio);
+      printf("Camada saia\n");
+      if(i%2 == 0){
+        e+=0.0-camada_saida->saida;
+      }else{
+        e+=1.0-camada_saida->saida;
+      }
     }
-    (*neuronio)->b = rand()%10;
+    printf("e = %.10lf\n", e);
+    if(e/50.0 < 0.2)break;  
+    //TODO: BackPropagation
   }
 }
 
-void inserir_dados(double*entradas, Neuronio** camada){
-  int size = sizeof(*camada) / sizeof(Neuronio);
-  for(int i = 0; i < size; i++){
-    (*camada+i)->entrada = &entradas[i];
-    nucleo((*camada+i));
+void sortear_wb(Neuronio** neuronio, int nmr_entradas, int nmr_w){
+  for(int j = 0; j < nmr_entradas; j++){
+    (*neuronio+j)->w = (int*)malloc(nmr_w*sizeof(int));
+    for(int i = 0; i < nmr_w; i++){
+      (*neuronio+j)->w[i] = rand()%1000;
+    }
+    (*neuronio+j)->b = rand()%1000;
+  }
+}
+
+void inserir_camada_entrada(double*entradas, Neuronio** camada, int size_camada){
+  for(int i = 0; i < size_camada; i++){
+    printf("Entrada - %d=%lf\n",i,entradas[i]);
+    (*camada+i)->entrada = (double*)malloc(536*sizeof(double));
+    for(int j = 0; j < 536; j++){
+      (*camada+i)->entrada[j] = entradas[j];
+    }
+    printf("Sai for\n");
+    nucleo((*camada+i), 536);
   }
 
 }
 
-void nucleo(Neuronio*neuronio){
-  int size;
-  size = sizeof(neuronio->entrada) / sizeof(double);
+void inserir_dados(Neuronio*saidas, Neuronio**camada, int size_camada, int size_saida){
+  for(int i = 0; i < size_camada; i++){
+    (*camada+i)->entrada = (double*)malloc(size_saida*sizeof(double));
+    for(int j = 0; j < size_saida; j++){
+      (*camada+i)->entrada[j] = saidas[j].saida;
+    }
+    nucleo((*camada+i), size_saida);
+  }  
+
+
+}
+
+void nucleo(Neuronio*neuronio, int size){
   for(int i = 0; i < size; i++){
     (neuronio+i)->saida = f(somatorio((neuronio+i), size)+(neuronio+i)->b);
   }
