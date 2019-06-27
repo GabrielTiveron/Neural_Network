@@ -11,17 +11,18 @@
 typedef struct Neuronio{
   double* entrada;
   double saida;
-  int* w;
-  int b;
+  double* w;
+  double b;
 }Neuronio;
 
 void sortear_wb(Neuronio**,int,int);
 void treinar_rede(double**,int);
 void inserir_camada_entrada(double*, Neuronio**, int);
 void inserir_dados(Neuronio*,Neuronio**,int,int);
-void nucleo(Neuronio*, int);
+void nucleo(Neuronio**, int);
 double somatorio(Neuronio*, int);
 double f(double);
+void back_propagation(Neuronio**,Neuronio**,Neuronio**,int*);
 
 
 #endif

@@ -9,53 +9,50 @@ void treinar_rede(double**entradas, int nmr_neuronio){
   sortear_wb(&camada_entrada, 536, 536);
   sortear_wb(&camada_oculta, nmr_neuronio, 536);
   sortear_wb(&camada_saida, 1, nmr_neuronio);
-  printf("\t\t\tPrimeira camada instanciada\n");
-  printf("===================================================================\n");
-  printf("Camada_E=%d\tCamada_O=%d\tCamada_S=%d\n", (camada_entrada)->w[10], camada_oculta->w[11], camada_saida->w[15]);
   printf("\t\t\tCalibrando Rede Neural\n");
   printf("===================================================================\n");
-  double e = 0;
+  double e = 0, *errors;
+  errors = (double*)malloc(50*sizeof(double));
   for(int epoca = 0; epoca < 1000; epoca++){
     e = 0;
     for(int i = 0; i < 50; i++){
       inserir_camada_entrada(entradas[i], &camada_entrada, 536);
-      printf("Primeira camada\n");
       inserir_dados(camada_entrada, &camada_oculta, nmr_neuronio, 536);
-      printf("Camada oculta\n");
       inserir_dados(camada_oculta, &camada_saida, 1, nmr_neuronio);
-      printf("Camada saia\n");
       if(i%2 == 0){
-        e+=0.0-camada_saida->saida;
+        errors[i] = pow(0.0-camada_saida->saida, 2);
+        e += errors[i];
       }else{
-        e+=1.0-camada_saida->saida;
+        errors[i] = pow(1.0-camada_saida->saida, 2);
+        e += errors[i];
       }
     }
     printf("e = %.10lf\n", e);
-    if(e/50.0 < 0.2)break;  
+    if(abs(e/50.0) < 0.2)break;  
     //TODO: BackPropagation
+    //back_propagation(&camada_entrada, &camada_oculta, &camada_saida, errors);
   }
 }
 
 void sortear_wb(Neuronio** neuronio, int nmr_entradas, int nmr_w){
   for(int j = 0; j < nmr_entradas; j++){
-    (*neuronio+j)->w = (int*)malloc(nmr_w*sizeof(int));
+    (*neuronio+j)->w = (double*)malloc(nmr_w*sizeof(double));
     for(int i = 0; i < nmr_w; i++){
-      (*neuronio+j)->w[i] = rand()%1000;
+      (*neuronio+j)->w[i] = (double)rand()/(double)(RAND_MAX/15000.0);
     }
-    (*neuronio+j)->b = rand()%1000;
+    (*neuronio+j)->b = (double)rand()/(double)(RAND_MAX/15000.0);
   }
 }
 
 void inserir_camada_entrada(double*entradas, Neuronio** camada, int size_camada){
   for(int i = 0; i < size_camada; i++){
-    printf("Entrada - %d=%lf\n",i,entradas[i]);
     (*camada+i)->entrada = (double*)malloc(536*sizeof(double));
     for(int j = 0; j < 536; j++){
       (*camada+i)->entrada[j] = entradas[j];
     }
-    printf("Sai for\n");
-    nucleo((*camada+i), 536);
   }
+  
+    nucleo(camada, 536);
 
 }
 
@@ -65,21 +62,26 @@ void inserir_dados(Neuronio*saidas, Neuronio**camada, int size_camada, int size_
     for(int j = 0; j < size_saida; j++){
       (*camada+i)->entrada[j] = saidas[j].saida;
     }
-    nucleo((*camada+i), size_saida);
   }  
+    nucleo(camada, size_camada);
 
 
 }
 
-void nucleo(Neuronio*neuronio, int size){
+void nucleo(Neuronio**neuronio, int size){
+  double aux;
   for(int i = 0; i < size; i++){
-    (neuronio+i)->saida = f(somatorio((neuronio+i), size)+(neuronio+i)->b);
+    printf("Lul - %d\n", i);
+    aux = somatorio((*neuronio+i), size);
+    (*neuronio+i)->saida = f(aux +(*neuronio+i)->b);
   }
 }
 
 double somatorio(Neuronio*entradas, int size){
   double soma = 0;
-  for(int i = 0; i < size; i ++){
+  for(int i = 0; i < size; i++){
+    if(i%375 == 0)
+    printf("%d - entrada = %.2lf\t|\tw = %.5lf\n",i, entradas->entrada[i], entradas->w[i]);
     soma += entradas->entrada[i] * entradas->w[i];
   }
   
@@ -90,4 +92,22 @@ double f(double n){
   double saida;
   saida = 1/(1+pow(M_E,-1*n));
   return saida;
+}
+
+void back_propagation(Neuronio**camada_entrada, Neuronio**camada_oculta, Neuronio**camada_saida, int *error){
+ /* TODO: 
+    Seja:
+      U(m) = somatorio(wi + xi)
+      V(m) = f(U(m) + bj)
+    Calcular gradientes seguindo as funções: 
+      ð(m) = f'(V(m)+bj)) * e(m)                      Para as camadas de entrada e oculta
+      ð(m) = f'(V(m)+bj)) * somatori(ð(m) * e(m))     Para a camada de saida
+
+    Para alterar as sinapses:                         Sendo n = a taxa constante de aprendizagem -> uma constante qualquer
+      Wji(m+1) = Wji(m) + n*v(m) *ð(m)
+      Bj(m+1) = Bj(m) + n*ðj(m) 
+
+
+
+ */
 }

@@ -5,7 +5,7 @@ void glcm(int ** pixels, double *glcm_vector, double **glcm_matrix){
   double energia = 0;
   double contraste = 0;
   int i = 0, j = 0;
-  for(i; i < 256; i++){
+  for(i=0; i < 256; i++){
     for(j = 0; j < 256; j++){
       glcm_matrix[i][j] = 0;
     }
