@@ -4,9 +4,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
-#define ENTRADA 0
-#define OCULTA 1
-#define SAIDA 2
+#define T_A 0.5
 
 typedef struct Neuronio{
   double* entrada;
@@ -16,13 +14,16 @@ typedef struct Neuronio{
 }Neuronio;
 
 void sortear_wb(Neuronio**,int,int);
-void treinar_rede(double**,int);
+void treinar_rede(double**,int,Neuronio**,Neuronio**,Neuronio**);
 void inserir_camada_entrada(double*, Neuronio**, int);
-void inserir_dados(Neuronio*,Neuronio**,int,int);
+void inserir_dados(Neuronio**,Neuronio**,int,int);
 void nucleo(Neuronio**, int);
 double somatorio(Neuronio*, int);
 double f(double);
-void back_propagation(Neuronio**,Neuronio**,Neuronio**,int*);
-
+void back_propagation(Neuronio**,Neuronio**,Neuronio**,int,int,int,double*);
+void altera_sinapses_vieses(Neuronio**,Neuronio**,int,int,double*);
+double somatorio_oculta(double*,Neuronio**,int,int);
+double f_linha(double);
+void testar_rede(double**,int,Neuronio**,Neuronio**,Neuronio**);
 
 #endif
