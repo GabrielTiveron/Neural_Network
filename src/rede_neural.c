@@ -36,6 +36,7 @@ void treinar_rede(double**entradas, int nmr_neuronio, Neuronio**camada_entrada, 
 void sortear_wb(Neuronio** neuronio, int nmr_entradas, int nmr_w){
   for(int j = 0; j < nmr_entradas; j++){
     (*neuronio+j)->w = (double*)malloc(nmr_w*sizeof(double));
+    (*neuronio+j)->entrada = (double*)malloc(nmr_w*sizeof(double));
     for(int i = 0; i < nmr_w; i++){
       (*neuronio+j)->w[i] = (double)rand()/(double)(RAND_MAX);
     }
@@ -45,19 +46,15 @@ void sortear_wb(Neuronio** neuronio, int nmr_entradas, int nmr_w){
 
 void inserir_camada_entrada(double*entradas, Neuronio** camada, int size_camada){
   for(int i = 0; i < size_camada; i++){
-    (*camada+i)->entrada = (double*)malloc(536*sizeof(double));
     for(int j = 0; j < 536; j++){
       (*camada+i)->entrada[j] = entradas[j];
     }
   }
-  
-    nucleo(camada, 536);
-
+  nucleo(camada, 536);
 }
 
 void inserir_dados(Neuronio**saidas, Neuronio**camada, int size_camada, int size_saida){
   for(int i = 0; i < size_camada; i++){
-    (*camada+i)->entrada = (double*)malloc(size_saida*sizeof(double));
     for(int j = 0; j < size_saida; j++){
       (*camada+i)->entrada[j] = (*saidas+j)->saida;
     }

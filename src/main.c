@@ -18,10 +18,10 @@ int main(int argc, char const **argv) {
   int nmr_neuronios = atoi(argv[1]);
 
   int casos_treino[25], index_treino = 0, opcao;
-  int **pixels = (int**) malloc(1024 * sizeof(int*));
+  int **pixels = (int**) malloc(1025 * sizeof(int*));
   double**resultado = (double**)calloc(50, sizeof(double*));
 
-  alocar_vetor_int(pixels, 1024);
+  alocar_vetor_int(pixels, 1025);
   alocar_vetor_double(resultado, 536);
 
   if(pixels == NULL || resultado == NULL){
@@ -51,10 +51,10 @@ int main(int argc, char const **argv) {
   camada_saida   = (Neuronio*)malloc(1*sizeof(Neuronio));
   treinar_rede(resultado, nmr_neuronios, &camada_entrada, &camada_oculta, &camada_saida);
   
-  for(int i = 0; i < 50; i++){
-    free(*(resultado+i));
-  }
-  free(resultado);
+  //for(int i = 0; i < 50; i++){
+  //  free(*(resultado+i));
+  //}
+  //free(resultado);
 
   printf("\t\t\tRede Neural Calibrada\n");
   printf("===================================================================\n");
@@ -65,20 +65,26 @@ int main(int argc, char const **argv) {
   
   alocar_vetor_double(resultado_teste, 536);
   
+  printf("Aqui 0\n");
   int caso_teste[25], index_teste = 0, treino = 0;
 
   for(int i = 1; i <= 50; i++){
     treino = 0;
     for(int j = 0; j < 25; j++){
-      if(casos_treino[j] == i) treino = 1;
+      if(casos_treino[j] == i) {
+        treino = 1;
+        break;
+      }
     }
     if(!treino){
+      printf("Numero: %d\n", i);
       caso_teste[index_teste] = i;
       index_teste++;
     }
   }
 
   index_teste = 0;
+  printf("Aqui 1\n");
 
   for(int i = 0; i < 50; i++){
      if(i % 2 == 0){
@@ -90,11 +96,15 @@ int main(int argc, char const **argv) {
       }
       gerar_vetores(pixels, caso_teste[index_teste], opcao, resultado_teste[i]);
   }
+    printf("Aqui 2\n");
+  //for(int i = 0; i < 1025; i++){
+  //  free(*(pixels+i));
+//  }
+
+  //free(pixels);
   
-  printf("Aqui\n");
   
   testar_rede(resultado_teste, nmr_neuronios, &camada_entrada, &camada_oculta, &camada_saida);
-  free_array(resultado_teste, 50, 536);
   
   return 0;
 }
