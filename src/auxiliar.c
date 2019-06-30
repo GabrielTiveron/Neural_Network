@@ -1,7 +1,7 @@
 #include"../inc/auxiliar.h"
 
 double distancia(double * a, double * b){
-  double soma = 0, sub;
+  double soma = 0.0, sub;
   for (int i = 0; i < 536; i++) {
     sub = a[i] - b[i];
     soma += (sub*sub);
@@ -20,13 +20,13 @@ void concatenar(double ilbp[512], double glcm[24], double *resultado){
 }
 
 void normaliza_vetor(double * vetor){
-  int min = 1024*1024+1, max = 0;
+  double min = 999999999.0, max = 0.0;
   for (int i = 0; i < 536; i++) {
     if (vetor[i] > max) {
       max = vetor[i];
     }
     if (vetor[i] < min) {
-      max = vetor[i];
+      min = vetor[i];
     }
   }
   for (int i = 0; i < 536; i++) {

@@ -1,33 +1,8 @@
 #include"../inc/ler_arquivo.h"
 
 
-// char ** montar_arquivos(int * index, char * base){
-//   char ** arquivo = (char**) calloc(25, sizeof(char*));
-//
-//   for (int i = 0; i < 25; i++) {
-//     if(strcmp(base, BASE_GRAMA) == 0){
-//       arquivo[i] = (char*) calloc(24, sizeof(char));
-//     }else{
-//       arquivo[i] = (char*) calloc(25, sizeof(char));
-//     }
-//   }
-//
-//   for (int i = 0; i < 25; i++) {
-//     sprintf(arquivo[i], "%s%02d%s",base, index[i], ".txt");
-//
-//   }
-//
-//   return arquivo;
-//
-// }
-char * montar_arquivo(int index, char * base){
-  char * arquivo = (char*) calloc(25, sizeof(char));
-
-  sprintf(arquivo, "%s%02d%s",base, index, ".txt");
-
-
-  return arquivo;
-
+void montar_arquivo(char**arquivo, int index, char * base){
+  sprintf(*arquivo, "%s%02d%s",base, index, ".txt\0");
 }
 
 void sortear_casos(int * arquivo_treino){
@@ -58,12 +33,12 @@ void sortear_casos(int * arquivo_treino){
 void gerar_vetores(int ** pixels, int index_teste, int opcao, double *resultado){
   char * arquivo;
   if (opcao == 0) {
-    arquivo = (char*) calloc(29, sizeof(char));
-    arquivo = montar_arquivo(index_teste, BASE_GRAMA);
+    arquivo = (char*) calloc(30, sizeof(char));
+    montar_arquivo(&arquivo,index_teste, BASE_GRAMA);
   }
   else{
-    arquivo = (char*) calloc(32, sizeof(char));
-    arquivo = montar_arquivo(index_teste, BASE_ASFALTO);
+    arquivo = (char*) calloc(33, sizeof(char));
+    montar_arquivo(&arquivo, index_teste, BASE_ASFALTO);
   }
 
   double * ilbp = (double*)calloc(512, sizeof(double));

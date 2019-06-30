@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include"../inc/ler_arquivo.h"
 #include"../inc/rede_neural.h"
 #define ASFALTO 1
@@ -8,7 +9,7 @@
 
 void alocar_vetor_int(int **, int);
 void alocar_vetor_double(double **, int);
-void free_array(double**, int,int);
+void escreve_arquivos(double**);
 
 int main(int argc, char const **argv) {
   if(argc != 2){
@@ -42,6 +43,7 @@ int main(int argc, char const **argv) {
     else{opcao = ASFALTO;}
     gerar_vetores(pixels, casos_treino[index_treino], opcao, resultado[i]);
   }
+//  escreve_arquivos(resultado);
 
   printf("\t\t\tCalibrando Rede Neural\n");
   printf("===================================================================\n");
@@ -51,10 +53,6 @@ int main(int argc, char const **argv) {
   camada_saida   = (Neuronio*)malloc(1*sizeof(Neuronio));
   treinar_rede(resultado, nmr_neuronios, &camada_entrada, &camada_oculta, &camada_saida);
   
-  //for(int i = 0; i < 50; i++){
-  //  free(*(resultado+i));
-  //}
-  //free(resultado);
 
   printf("\t\t\tRede Neural Calibrada\n");
   printf("===================================================================\n");
@@ -65,8 +63,7 @@ int main(int argc, char const **argv) {
   
   alocar_vetor_double(resultado_teste, 536);
   
-  printf("Aqui 0\n");
-  int caso_teste[25], index_teste = 0, treino = 0;
+  int *caso_teste = (int*)calloc(25, sizeof(int)), index_teste = 0, treino = 0;
 
   for(int i = 1; i <= 50; i++){
     treino = 0;
@@ -77,14 +74,12 @@ int main(int argc, char const **argv) {
       }
     }
     if(!treino){
-      printf("Numero: %d\n", i);
       caso_teste[index_teste] = i;
       index_teste++;
     }
   }
-
+  printf("Aqui\n");
   index_teste = 0;
-  printf("Aqui 1\n");
 
   for(int i = 0; i < 50; i++){
      if(i % 2 == 0){
@@ -96,12 +91,6 @@ int main(int argc, char const **argv) {
       }
       gerar_vetores(pixels, caso_teste[index_teste], opcao, resultado_teste[i]);
   }
-    printf("Aqui 2\n");
-  //for(int i = 0; i < 1025; i++){
-  //  free(*(pixels+i));
-//  }
-
-  //free(pixels);
   
   
   testar_rede(resultado_teste, nmr_neuronios, &camada_entrada, &camada_oculta, &camada_saida);
@@ -118,11 +107,4 @@ void alocar_vetor_double(double **vetor, int tamanho){
   for (int i = 0; i < tamanho; i++) {
     *(vetor+i) = (double*)malloc(tamanho*sizeof(double));
   }
-}
-
-void free_array(double **array, int linha, int coluna){
-  for(int i = 0; i < 50; i++){
-    free(*(array+i));
-  }
-  free(array);
 }

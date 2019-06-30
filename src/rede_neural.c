@@ -5,8 +5,6 @@ void treinar_rede(double**entradas, int nmr_neuronio, Neuronio**camada_entrada, 
   sortear_wb(camada_entrada, 536, 536);
   sortear_wb(camada_oculta, nmr_neuronio, 536);
   sortear_wb(camada_saida, 1, nmr_neuronio);
-  printf("\t\t\tCalibrando Rede Neural\n");
-  printf("===================================================================\n");
   double e = 0, *errors;
   errors = (double*)malloc(50*sizeof(double));
   for(int epoca = 0; epoca < 1000; epoca++){
@@ -24,9 +22,7 @@ void treinar_rede(double**entradas, int nmr_neuronio, Neuronio**camada_entrada, 
       }
       back_propagation(camada_entrada, camada_oculta, camada_saida, errors[i], nmr_neuronio, i, entradas[i]);
     }
-    printf("e = %.10lf\n", e/50.0);
     if(e/50.0 < 0.2){
-      printf("Calibrado pelo fator erro\n");
       break;
     }
   }
@@ -67,15 +63,15 @@ void inserir_dados(Neuronio**saidas, Neuronio**camada, int size_camada, int size
 void nucleo(Neuronio**neuronio, int size){
   double aux;
   for(int i = 0; i < size; i++){
-    aux = somatorio((*neuronio+i), size);
+    aux = somatorio(neuronio, size, i);
     (*neuronio+i)->saida = f(aux +(*neuronio+i)->b);
   }
 }
 
-double somatorio(Neuronio*entradas, int size){
+double somatorio(Neuronio**entradas, int size, int index){
   double soma = 0;
   for(int i = 0; i < size; i++){
-    soma += entradas->entrada[i] * entradas->w[i];
+    soma += (*entradas+index)->entrada[i] * (*entradas+index)->w[i];
   }
   
   return soma;
@@ -83,11 +79,11 @@ double somatorio(Neuronio*entradas, int size){
 
 double f(double n){
   double saida;
-  saida = 1.0/(1.0+pow(M_E,-n));
+  saida = 1.0/(1.0+exp(-n));
   return saida;
 }
 
-void back_propagation(Neuronio**camada_entrada, Neuronio**camada_oculta, Neuronio**camada_saida, int error, int nmr_neuronio, int index, double *entradas){
+void back_propagation(Neuronio**camada_entrada, Neuronio**camada_oculta, Neuronio**camada_saida, double error, int nmr_neuronio, int index, double *entradas){
  
   // Calcular gradientes de cada camada 
   
@@ -96,10 +92,10 @@ void back_propagation(Neuronio**camada_entrada, Neuronio**camada_oculta, Neuroni
   gradiente_oculta  = (double*)malloc(nmr_neuronio*sizeof(double));
   gradiente_saida   = (double*)malloc(1*sizeof(double));
   
-  *gradiente_saida = f_linha((*camada_saida)->saida) * error;
+  gradiente_saida[0] = f_linha((*camada_saida)->saida) * error;
   
   for(int i = 0; i < nmr_neuronio; i++){
-    gradiente_oculta[i] = f_linha((*camada_oculta+i)->saida) * *gradiente_saida * (*camada_saida)->w[i];
+    gradiente_oculta[i] = f_linha((*camada_oculta+i)->saida) * (*gradiente_saida) * (*camada_saida)->w[i];
   }
 
   for(int i = 0; i < 536; i++){
@@ -107,7 +103,6 @@ void back_propagation(Neuronio**camada_entrada, Neuronio**camada_oculta, Neuroni
   }
 
   // Alterar Sinapses e Vieses
-  
   altera_sinapses_vieses(camada_saida, camada_oculta, 1, nmr_neuronio, gradiente_saida);
   altera_sinapses_vieses(camada_oculta, camada_entrada, nmr_neuronio, 536, gradiente_oculta);
 
@@ -140,7 +135,7 @@ double somatorio_oculta(double *gradiente, Neuronio**camada, int nmr_neuronio, i
 }
 
 double f_linha(double n){
-  return(pow(M_E, n) / pow(1.0+pow(M_E, n), 2.0));
+  return((double) exp(-n) / (double) pow(1+exp(-n), 2));
 }
 
 void testar_rede(double**entradas, int nmr_neuronio, Neuronio**camada_entrada, Neuronio**camada_oculta, Neuronio**camada_saida){
@@ -149,6 +144,7 @@ void testar_rede(double**entradas, int nmr_neuronio, Neuronio**camada_entrada, N
     inserir_camada_entrada(entradas[i], camada_entrada, 536);
     inserir_dados(camada_entrada, camada_oculta, nmr_neuronio, 536);
     inserir_dados(camada_oculta, camada_saida, 1, nmr_neuronio);
+      printf("SAIDA -%.10lf\n", (*camada_saida)->saida);
     if(i % 2 == 0){
       if((*camada_saida)->saida > 0.5){
         acerto++;

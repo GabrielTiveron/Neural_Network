@@ -13,7 +13,7 @@
 #define EXTENSAO ".txt\0"
 
 // char ** montar_arquivos(int *, char *);
-char * montar_arquivo(int , char *);
+void montar_arquivo(char**,int , char *);
 void sortear_casos(int*);
 void gerar_vetores(int**, int, int, double*);
 void ler_imagens(char*, int**);
